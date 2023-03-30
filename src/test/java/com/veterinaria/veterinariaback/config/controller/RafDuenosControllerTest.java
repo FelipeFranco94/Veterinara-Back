@@ -16,9 +16,8 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class RafDuenosControllerTest {
     int nmid = 1;
@@ -72,6 +71,17 @@ class RafDuenosControllerTest {
         BDDMockito.given(rafDuenosService.findOne(nmid)).willReturn(null);
         Exception exception = assertThrows(ApplicationCustomException.class, () -> {
             rafDuenosController.getDueno(nmid);
+        });
+        String actualMessage = exception.getMessage();
+        assertNotNull(actualMessage);
+    }
+
+    @Test
+    void createDuenoException(){
+        doNothing().when(log).debug("Prueba");
+        BDDMockito.given(rafDuenosService.findOne(rafDuenos.getNmid())).willReturn(rafDuenos);
+        Exception exception = assertThrows(ApplicationCustomException.class, () -> {
+            rafDuenosController.createDueno(rafDuenos);
         });
         String actualMessage = exception.getMessage();
         assertNotNull(actualMessage);

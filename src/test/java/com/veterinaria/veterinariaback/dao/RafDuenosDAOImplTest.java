@@ -1,5 +1,4 @@
 package com.veterinaria.veterinariaback.dao;
-
 import com.veterinaria.veterinariaback.dto.RafDuenos;
 import com.veterinaria.veterinariaback.mapper.DuenosMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,7 +21,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RafDuenosDAOImplTest {
@@ -71,4 +74,32 @@ class RafDuenosDAOImplTest {
         when(jdbcTemplate.queryForObject(any(),any(DuenosMapper.class),anyInt())).thenThrow(EmptyResultDataAccessException.class);
         assertNull(rafDuenosDAO.getById(1));
     }
+
+/* @Test
+    public void testInsert() {
+        RafDuenos rafDuenos = new RafDuenos();
+        rafDuenos.setNmid(1);
+        rafDuenos.setDsnombre_dueno("Hola");
+        rafDuenos.setDstipo_documento("C.C.");
+        rafDuenos.setNmidentificacion(1L);
+        rafDuenos.setDsciudad("Bello");
+        rafDuenos.setDsdireccion("Calle 123");
+        rafDuenos.setNmtelefono(1L);
+
+        KeyHolder keyHolder = mock(GeneratedKeyHolder.class);
+        when(keyHolder.getKey()).thenReturn(1);
+
+        when(jdbcTemplate.update(any(PreparedStatementCreator.class), any(KeyHolder.class)))
+                .thenAnswer(invocation -> {
+                    PreparedStatementCreator psc = invocation.getArgument(0);
+                    psc.createPreparedStatement(mock(Connection.class));
+                    return 1;
+                });
+
+        RafDuenos insertedDueno = rafDuenosDAO.insert(new RafDuenos());
+
+        assertNotNull(insertedDueno);
+        assertEquals(1, insertedDueno.getNmid());
+        verify(jdbcTemplate, times(1)).update(any(PreparedStatementCreator.class), any(KeyHolder.class));
+    }*/
 }

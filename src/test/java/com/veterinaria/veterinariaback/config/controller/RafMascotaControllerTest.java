@@ -6,10 +6,7 @@ import com.veterinaria.veterinariaback.service.RafMascotasServiceImpl;
 import com.veterinaria.veterinariaback.util.ResponseMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 
@@ -76,5 +73,28 @@ class RafMascotaControllerTest {
         BDDMockito.given(rafMascotaService.findOne(nmid_dueno)).willReturn(null);
         ResponseEntity<ResponseMessage<List<RafMascota>>> res =  rafMascotaController.getMascotas(nmid_dueno);
         assertNotNull(res);
+    }
+
+    @Test
+    void createMascotasException(){
+        doNothing().when(log).debug("Prueba");
+        BDDMockito.given(rafMascotaService.findOne(rafMascota.getNmid())).willReturn(rafMascota);
+        Exception exception = assertThrows(ApplicationCustomException.class, () -> {
+            rafMascotaController.createMascotas(rafMascota);
+        });
+        String actualMessage = exception.getMessage();
+        assertNotNull(actualMessage);
+    }
+
+    @Test
+    void getMascotasIF() throws ApplicationCustomException {
+        RafMascotasServiceImpl rafMascotaService = Mockito.mock(RafMascotasServiceImpl.class);
+        RafMascotaController rafMascotaController = new RafMascotaController(rafMascotaService);
+        List<RafMascota> rafMascotaMock = Mockito.mock(List.class);
+        Mockito.when(rafMascotaService.findOneMascota(Mockito.anyInt())).thenReturn(rafMascotaMock);
+        rafMascotaController.getMascotas(1);
+        Mockito.verify(rafMascotaService, Mockito.times(1)).findOneMascota(1);
+        Mockito.when(rafMascotaService.findOneMascota(Mockito.anyInt())).thenReturn(null);
+        assertThrows(ApplicationCustomException.class, () -> rafMascotaController.getMascotas(1));
     }
 }
